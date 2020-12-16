@@ -6,18 +6,18 @@ Created on Sun Nov 15 10:55:59 2020
 #导入使用的包
 import numpy as np
 import matplotlib.pyplot as plt
-
+#==================================================
+#1.迷宫环境初始化
+#==================================================
 #迷宫的初始位置
-#声明图的大小以及图的变量
+#声明图的大小(5英寸*5英寸，1英寸=2.5厘米)以及图的变量
 fig = plt.figure(figsize=(5, 5))
 ax = plt.gca()
-
 #画出红色的墙壁
 plt.plot([1, 1], [0, 1], color='red', linewidth=2)
 plt.plot([1, 2], [2, 2], color='red', linewidth=2)
 plt.plot([2, 2], [2, 1], color='red', linewidth=2)
 plt.plot([2, 3], [1, 1], color='red', linewidth=2)
-
 #画出表示状态的文字S0~S8
 plt.text(0.5, 2.5, 'S0', size=14, ha='center')
 plt.text(1.5, 2.5, 'S1', size=14, ha='center')
@@ -30,18 +30,19 @@ plt.text(1.5, 0.5, 'S7', size=14, ha='center')
 plt.text(2.5, 0.5, 'S8', size=14, ha='center')
 plt.text(0.5, 2.3, 'START', ha='center')
 plt.text(2.5, 0.3, 'GOAL', ha='center')
-
 #设定画图的范围
 ax.set_xlim(0, 3)
 ax.set_ylim(0, 3)
 plt.tick_params(axis='both', which='both', bottom='off', top='off',
                 labelbottom='off', right='off', left='off', labelleft='off')
-
 #当前位置S0用绿色圆圈画出
 line, = ax.plot([0.5], [2.5], marker="o", color='g', markersize=60)
 
+#==================================================
+#2.策略参数theta
+#==================================================
 #设定参数theta的初始值，用于确定初始方案
-#行为状态0~7，列用上↑右→下↓左←表示的移动方向
+#行为状态空间S：0~7，列用动作空间A：上↑右→下↓左←，表示的移动方向
 theta_0 = np.array([[np.nan, 1, 1, np.nan],  # s0
                     [np.nan, 1, np.nan, 1],  # s1
                     [np.nan, np.nan, 1, 1],  # s2
@@ -52,24 +53,29 @@ theta_0 = np.array([[np.nan, 1, 1, np.nan],  # s0
                     [1, 1, np.nan, np.nan],  # s7、※s8是目标，无策略
                     ])
 
+#==================================================
+#3.策略转换θ->π
+#==================================================
 #将策略theta转换为行动策略pi的函数的定义
 def simple_convert_into_pi_from_theta(theta):
     '''简单计算百分比'''
-
     [m, n] = theta.shape  # theta的行和列
     pi = np.zeros((m, n))
     for i in range(0, m):
         pi[i, :] = theta[i, :] / np.nansum(theta[i, :])  # 计算百分比
-
+    
     pi = np.nan_to_num(pi)  # 将nan转换为0
-
+    
     return pi
 
-#求初始策略pi
+#调用策略转换函数，求初始策略pi
 pi_0 = simple_convert_into_pi_from_theta(theta_0)
 #打印查看策略pi
 print(pi_0)
 
+#==================================================
+#4.下一状态的获取
+#==================================================
 #1步移动后求得状态s的函数的定义
 def get_next_s(pi, s):
     direction = ["up", "right", "down", "left"]
@@ -88,6 +94,9 @@ def get_next_s(pi, s):
 
     return s_next
 
+#==================================================
+#5.目标函数
+#==================================================
 #迷宫内使智能体持续移动的函数
 def goal_maze(pi):
     s = 0  # 开始地点
@@ -111,16 +120,17 @@ state_history = goal_maze(pi_0)
 print(state_history)
 print("迷宫探索步伐：" + str(len(state_history) - 1) + "次")
 
+#==================================================
+#6.运动轨迹动态显示
+#==================================================
 #将智能体移动进行可视化
 from matplotlib import animation
-from IPython.display import HTML
-
+#from IPython.display import HTML
 
 def init():
     '''初始化背景'''
     line.set_data([], [])
     return (line,)
-
 
 def animate(i):
     '''每一帧的画面内容'''
@@ -132,10 +142,16 @@ def animate(i):
 
 
 #用初始化函数和绘图函数来生成动画
+"""
+fig:绘制动图的画布名称
+animate:自定义动画函数
+init_func=init:自定义开始帧，即传入刚定义的函数init,初始化函数
+frames=len(state_history):
+interval=200:更新频率，以ms计
+repeat=False:
+"""
 anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(
     state_history), interval=200, repeat=False)
-
-#HTML(anim.to_jshtml()) #在jupyter中显示动画
 
 
 

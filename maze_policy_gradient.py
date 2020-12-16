@@ -6,18 +6,18 @@ Created on Sun Nov 15 10:55:59 2020
 #导入使用的包
 import numpy as np
 import matplotlib.pyplot as plt
-
+#==================================================
+#1.迷宫环境初始化
+#==================================================
 #迷宫的初始位置
 #声明图的大小以及图的变量
 fig = plt.figure(figsize=(5, 5))
 ax = plt.gca()
-
 #画出红色的墙壁
 plt.plot([1, 1], [0, 1], color='red', linewidth=2)
 plt.plot([1, 2], [2, 2], color='red', linewidth=2)
 plt.plot([2, 2], [2, 1], color='red', linewidth=2)
 plt.plot([2, 3], [1, 1], color='red', linewidth=2)
-
 #画出表示状态的文字S0~S8
 plt.text(0.5, 2.5, 'S0', size=14, ha='center')
 plt.text(1.5, 2.5, 'S1', size=14, ha='center')
@@ -30,16 +30,17 @@ plt.text(1.5, 0.5, 'S7', size=14, ha='center')
 plt.text(2.5, 0.5, 'S8', size=14, ha='center')
 plt.text(0.5, 2.3, 'START', ha='center')
 plt.text(2.5, 0.3, 'GOAL', ha='center')
-
 #设定画图的范围
 ax.set_xlim(0, 3)
 ax.set_ylim(0, 3)
 plt.tick_params(axis='both', which='both', bottom='off', top='off',
                 labelbottom='off', right='off', left='off', labelleft='off')
-
 #当前位置S0用绿色圆圈画出
 line, = ax.plot([0.5], [2.5], marker="o", color='g', markersize=60)
 
+#==================================================
+#2.策略参数theta
+#==================================================
 #设定参数theta的初始值，用于确定初始方案
 #行为状态0~7，列用上↑右→下↓左←表示的移动方向
 theta_0 = np.array([[np.nan, 1, 1, np.nan],  # s0
@@ -52,6 +53,9 @@ theta_0 = np.array([[np.nan, 1, 1, np.nan],  # s0
                     [1, 1, np.nan, np.nan],  # s7、※s8是目标，无策略
                     ])
 
+#==================================================
+#3.策略转换θ->π
+#==================================================
 #将策略theta根据softmax函数，转换为行动策略pi的函数的定义
 def softmax_convert_into_pi_from_theta(theta):
     '''根据softmax函数，计算比率'''
@@ -73,6 +77,9 @@ pi_0 = softmax_convert_into_pi_from_theta(theta_0)
 #打印查看策略pi
 print(pi_0)
 
+#==================================================
+#4.下一状态的获取
+#==================================================
 #求取动作a,1步移动后求得状态s的函数的定义
 def get_action_and_next_s(pi, s):
     direction = ["up", "right", "down", "left"]
@@ -95,6 +102,9 @@ def get_action_and_next_s(pi, s):
 
     return [action,s_next]
 
+#==================================================
+#5.目标函数
+#==================================================
 #迷宫内使智能体持续移动的函数
 def goal_maze_ret_s_a(pi):
     s = 0  # 开始地点
@@ -121,7 +131,9 @@ s_a_history = goal_maze_ret_s_a(pi_0)
 print(s_a_history)
 print("迷宫探索步伐：" + str(len(s_a_history) - 1) + "次")
 
-
+#==================================================
+#6.theta的更新
+#==================================================
 #定义theta的更新函数
 def update_theta(theta, pi, s_a_history):
     eta = 0.1 # 学习率
@@ -154,7 +166,9 @@ new_theta = update_theta(theta_0, pi_0, s_a_history)
 pi = softmax_convert_into_pi_from_theta(new_theta)
 print(pi)
 
-
+#==================================================
+#7.【策略梯度法】求解迷宫问题
+#==================================================
 stop_epsilon = 10**-4 #策略的变化小于10-4则结束学习
 theta = theta_0
 pi = pi_0
@@ -179,16 +193,17 @@ np.set_printoptions(precision=3, suppress=True)  # 有効桁数3、指数表示�
 print(pi)
 
 
+#==================================================
+#8.运动轨迹动态显示
+#==================================================
 #将智能体移动进行可视化
 from matplotlib import animation
-from IPython.display import HTML
-
+#from IPython.display import HTML
 
 def init():
     '''初始化背景'''
     line.set_data([], [])
     return (line,)
-
 
 def animate(i):
     '''每一帧的画面内容'''
@@ -203,7 +218,6 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(
     s_a_history), interval=200, repeat=False)
 
-HTML(anim.to_jshtml()) #在jupyter中显示动画
 
 
 

@@ -6,18 +6,18 @@ Created on Sun Nov 15 10:55:59 2020
 #导入使用的包
 import numpy as np
 import matplotlib.pyplot as plt
-
+#==================================================
+#1.迷宫环境初始化
+#==================================================
 #迷宫的初始位置
 #声明图的大小以及图的变量
 fig = plt.figure(figsize=(5, 5))
 ax = plt.gca()
-
 #画出红色的墙壁
 plt.plot([1, 1], [0, 1], color='red', linewidth=2)
 plt.plot([1, 2], [2, 2], color='red', linewidth=2)
 plt.plot([2, 2], [2, 1], color='red', linewidth=2)
 plt.plot([2, 3], [1, 1], color='red', linewidth=2)
-
 #画出表示状态的文字S0~S8
 plt.text(0.5, 2.5, 'S0', size=14, ha='center')
 plt.text(1.5, 2.5, 'S1', size=14, ha='center')
@@ -30,13 +30,11 @@ plt.text(1.5, 0.5, 'S7', size=14, ha='center')
 plt.text(2.5, 0.5, 'S8', size=14, ha='center')
 plt.text(0.5, 2.3, 'START', ha='center')
 plt.text(2.5, 0.3, 'GOAL', ha='center')
-
 #设定画图的范围
 ax.set_xlim(0, 3)
 ax.set_ylim(0, 3)
 plt.tick_params(axis='both', which='both', bottom='off', top='off',
                 labelbottom='off', right='off', left='off', labelleft='off')
-
 #当前位置S0用绿色圆圈画出
 line, = ax.plot([0.5], [2.5], marker="o", color='g', markersize=60)
 
@@ -52,10 +50,12 @@ theta_0 = np.array([[np.nan, 1, 1, np.nan],  # s0
                     [1, 1, np.nan, np.nan],  # s7、※s8是目标，无策略
                     ])
 
+#==================================================
+#2.策略参数theta
+#==================================================
 #将策略参数theta0，转换为随机策略
 def simple_convert_into_pi_from_theta(theta):
     '''简单计算比率'''
-
     [m, n] = theta.shape  # theta矩阵大小
     pi = np.zeros((m, n))
     for i in range(0, m):
@@ -75,12 +75,12 @@ print(pi_0)
 Q = np.random.rand(a, b) * theta_0
 #将theta_0乘到各元素上，使得Q的墙壁方向的值为nan
 
+#==================================================
+#3.动作函数，状态获取函数
+#==================================================
 # ε-greedy贪婪法
-
-
 def get_action(s, Q, epsilon, pi_0):
     direction = ["up", "right", "down", "left"]
-
     # 确定行动
     if np.random.rand() < epsilon:
         # ε概率随机行动
@@ -88,7 +88,6 @@ def get_action(s, Q, epsilon, pi_0):
     else:
         # 采用Q的最大值对应的动作
         next_direction = direction[np.nanargmax(Q[s, :])]
-
     # 为动作加索引
     if next_direction == "up":
         action = 0
@@ -98,9 +97,7 @@ def get_action(s, Q, epsilon, pi_0):
         action = 2
     elif next_direction == "left":
         action = 3
-
     return action
-
 
 def get_s_next(s, a, Q, epsilon, pi_0):
     direction = ["up", "right", "down", "left"]
@@ -118,6 +115,9 @@ def get_s_next(s, a, Q, epsilon, pi_0):
 
     return s_next
 
+#==================================================
+#4.Sarsa算法
+#==================================================
 #基于Sarsa更新动作价值函数Q
 def Sarsa(s, a, r, s_next, a_next, Q, eta, gamma):
 
@@ -129,6 +129,9 @@ def Sarsa(s, a, r, s_next, a_next, Q, eta, gamma):
 
     return Q
 
+#==================================================
+#5.Sarsa算法求解迷宫问题
+#==================================================
 #定义基于sarsa求解迷宫问题的函数，输出状态，动作的历史记录以及更新后的Q
 def goal_maze_ret_s_a_Q(Q, epsilon, eta, gamma, pi):
     s = 0  # 开始地点
@@ -137,16 +140,12 @@ def goal_maze_ret_s_a_Q(Q, epsilon, eta, gamma, pi):
 
     while (1):  # 循环直至到达目标
         a = a_next  # 跟新动作
-
         s_a_history[-1][1] = a
         # 将动作放在现在的状态，最终的index=-1
-
         s_next = get_s_next(s, a, Q, epsilon, pi)
         # 有效的下一个状态
-
         s_a_history.append([s_next, np.nan])
         # 代入下一个状态，动作未知时为nan
-
         # 给予奖励，求得下一个动作
         if s_next == 8:
             r = 1  # 到达目标，给予奖励
@@ -155,10 +154,8 @@ def goal_maze_ret_s_a_Q(Q, epsilon, eta, gamma, pi):
             r = 0
             a_next = get_action(s_next, Q, epsilon, pi)
             # 求得下一动作a_next
-
         # 更新价值函数
         Q = Sarsa(s, a, r, s_next, a_next, Q, eta, gamma)
-
         # 终止判断
         if s_next == 8:  # 到达目的地结束
             break
@@ -181,7 +178,6 @@ while is_continue:  # 循环直到is_continue为false
 
     # ε-greedy贪婪法的值逐渐减少
     epsilon = epsilon / 2
-
     # Sarsa求解迷宫问题，求取移动历史和更新后的Q值
     [s_a_history, Q] = goal_maze_ret_s_a_Q(Q, epsilon, eta, gamma, pi_0)
 
@@ -197,8 +193,9 @@ while is_continue:  # 循环直到is_continue为false
     if episode > 100:
         break
 
-
-
+#==================================================
+#6.动作函数，动作函数
+#==================================================
 #将智能体移动进行可视化
 from matplotlib import animation
 from IPython.display import HTML
@@ -208,7 +205,6 @@ def init():
     '''初始化背景'''
     line.set_data([], [])
     return (line,)
-
 
 def animate(i):
     '''每一帧的画面内容'''
