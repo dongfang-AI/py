@@ -83,10 +83,8 @@ print(pi_0)
 #求取动作a,1步移动后求得状态s的函数的定义
 def get_action_and_next_s(pi, s):
     direction = ["up", "right", "down", "left"]
-
     next_direction = np.random.choice(direction, p=pi[s, :])
     # 依据pi[s,:]概率选择direction
-
     if next_direction == "up":
         action=0
         s_next = s - 3  # 上移动3步
@@ -109,14 +107,11 @@ def get_action_and_next_s(pi, s):
 def goal_maze_ret_s_a(pi):
     s = 0  # 开始地点
     s_a_history = [[0,np.nan]]  # 记录智能体移动轨迹的列表
-
     while (1):  # 死循环，直到到达目标S8
         [action,next_s]=get_action_and_next_s(pi,s)
         s_a_history[-1][1]=action
         #代入当前状态（即目前最后一个状态index=-1）的动作
-        
         s_a_history.append([next_s,np.nan])  # 在记录列表中增加下一个状态（智能体的位置）
-
         if next_s == 8:  #到达目标地点则终止
             break
         else:
@@ -138,7 +133,6 @@ print("迷宫探索步伐：" + str(len(s_a_history) - 1) + "次")
 def update_theta(theta, pi, s_a_history):
     eta = 0.1 # 学习率
     T = len(s_a_history) - 1  #到达目标的总步数
-
     [m, n] = theta.shape  # theta矩阵的大小
     delta_theta = theta.copy()  # Δtheta生成、不能直接使用delta_theta = theta
 

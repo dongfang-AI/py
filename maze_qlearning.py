@@ -128,7 +128,6 @@ def Q_learning(s, a, r, s_next, Q, eta, gamma):
 
     if s_next == 8:  # 到达目标时
         Q[s, a] = Q[s, a] + eta * (r - Q[s, a])
-
     else:
         Q[s, a] = Q[s, a] + eta * (r + gamma * np.nanmax(Q[s_next,: ]) - Q[s, a])
 
@@ -207,7 +206,7 @@ while is_continue:  # 循环直到is_continue为false
 
 #将智能体移动进行可视化
 from matplotlib import animation
-from IPython.display import HTML
+#from IPython.display import HTML
 import matplotlib.cm as cm #color map
 
 def init():
@@ -244,7 +243,7 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(V), 
                                interval=200, repeat=False)
 
-HTML(anim.to_jshtml()) #在jupyter中显示动画
+#HTML(anim.to_jshtml()) #在jupyter中显示动画
 
 
 

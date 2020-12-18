@@ -120,10 +120,8 @@ def get_s_next(s, a, Q, epsilon, pi_0):
 #==================================================
 #基于Sarsa更新动作价值函数Q
 def Sarsa(s, a, r, s_next, a_next, Q, eta, gamma):
-
     if s_next == 8:  # 已到达目标
         Q[s, a] = Q[s, a] + eta * (r - Q[s, a])
-
     else:
         Q[s, a] = Q[s, a] + eta * (r + gamma * Q[s_next, a_next] - Q[s, a])
 
@@ -198,7 +196,7 @@ while is_continue:  # 循环直到is_continue为false
 #==================================================
 #将智能体移动进行可视化
 from matplotlib import animation
-from IPython.display import HTML
+#from IPython.display import HTML
 
 
 def init():
@@ -219,7 +217,6 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(
     s_a_history), interval=200, repeat=False)
 
-HTML(anim.to_jshtml()) #在jupyter中显示动画
 
 
 

@@ -4,7 +4,7 @@ Created on Thu Nov 19 16:10:54 2020
 
 @author: wh
 """
-
+#导入包
 import numpy as np
 import matplotlib.pyplot as plt
 #%matplotlib inline
@@ -17,7 +17,7 @@ import gym
 
 #def display_frames_as_gif(frames):
 #    """
-#    Displays a list of frames as a gif, with controls
+#    gif形式显示帧的列表，并带有控件
 #    """
 #    plt.figure(figsize=(frames[0].shape[1]/72.0, frames[0].shape[0]/72.0),
 #               dpi=72)
@@ -30,50 +30,49 @@ import gym
 #    anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames),
 #                                   interval=50)
 #
-#    anim.save('movie_cartpole.mp4')  # 追記：動画の保存です
+#    anim.save('movie_cartpole.mp4')  # 保存视频的名字
 #    display(display_animation(anim, default_mode='loop'))
 
-# 定数の設定
-ENV = 'CartPole-v0'  # 使用する課題名
-NUM_DIZITIZED = 6  # 各状態の離散値への分割数
-GAMMA = 0.99  # 時間割引率
-ETA = 0.5  # 学習係数
-MAX_STEPS = 200  # 1試行のstep数
-NUM_EPISODES = 1000  # 最大試行回数
+#常数的设定
+ENV = 'CartPole-v0'  # 使用的任务名称
+NUM_DIZITIZED = 6  # 将状态划分为离散值的个数
+GAMMA = 0.99  # 时间折扣率
+ETA = 0.5  # 学习系数
+MAX_STEPS = 200  # 1次试验中的步数
+NUM_EPISODES = 1000  # 最大试验次数
 
 class Agent:
-    '''CartPoleのエージェントクラスです、棒付き台車そのものになります'''
+    '''CartPole的智能体类，将是带有杆的小车'''
 
     def __init__(self, num_states, num_actions):
-        self.brain = Brain(num_states, num_actions)  # エージェントが行動を決定するための頭脳を生成
+        self.brain = Brain(num_states, num_actions)  # 为智能体创建大脑以做出决策
 
     def update_Q_function(self, observation, action, reward, observation_next):
-        '''Q関数の更新'''
+        '''Q函数的更新'''
         self.brain.update_Q_table(
             observation, action, reward, observation_next)
 
     def get_action(self, observation, step):
-        '''行動の決定'''
+        '''动作的确定'''
         action = self.brain.decide_action(observation, step)
         return action
 
 class Brain:
-    '''エージェントが持つ脳となるクラスです、Q学習を実行します'''
+    '''Agent的大脑，用于Q学习'''
 
     def __init__(self, num_states, num_actions):
-        self.num_actions = num_actions  # CartPoleの行動（右に左に押す）の2を取得
-
-        # Qテーブルを作成。行数は状態を分割数^（4変数）にデジタル変換した値、列数は行動数を示す
+        self.num_actions = num_actions  # CartPole两种动作（向左或向右）
+        # Q表创建，行数为状态离散化后的分割数，列数为动作数
         self.q_table = np.random.uniform(low=0, high=1, size=(
             NUM_DIZITIZED**num_states, num_actions))
 
 
     def bins(self, clip_min, clip_max, num):
-        '''観測した状態（連続値）を離散値にデジタル変換する閾値を求める'''
+        '''求得观察到的状态（连续值）到离散值的数字转换阈值'''
         return np.linspace(clip_min, clip_max, num + 1)[1:-1]
 
     def digitize_state(self, observation):
-        '''観測したobservation状態を、離散値に変換する'''
+        '''将观察到的observation转换为离散值'''
         cart_pos, cart_v, pole_angle, pole_v = observation
         digitized = [
             np.digitize(cart_pos, bins=self.bins(-2.4, 2.4, NUM_DIZITIZED)),
@@ -84,86 +83,87 @@ class Brain:
         return sum([x * (NUM_DIZITIZED**i) for i, x in enumerate(digitized)])
 
     def update_Q_table(self, observation, action, reward, observation_next):
-        '''QテーブルをQ学習により更新'''
-        state = self.digitize_state(observation)  # 状態を離散化
-        state_next = self.digitize_state(observation_next)  # 次の状態を離散化
+        '''Q学习更新Q表'''
+        state = self.digitize_state(observation)  # 状态离散化
+        state_next = self.digitize_state(observation_next)  # 将下一个状态离散化
         Max_Q_next = max(self.q_table[state_next][:])
         self.q_table[state, action] = self.q_table[state, action] + \
             ETA * (reward + GAMMA * Max_Q_next - self.q_table[state, action])
 
     def decide_action(self, observation, episode):
-        '''ε-greedy法で徐々に最適行動のみを採用する'''
+        '''根据ε-greedy贪婪法，逐渐采用最优动作'''
         state = self.digitize_state(observation)
         epsilon = 0.5 * (1 / (episode + 1))
 
         if epsilon <= np.random.uniform(0, 1):
             action = np.argmax(self.q_table[state][:])
         else:
-            action = np.random.choice(self.num_actions)  # 0,1の行動をランダムに返す
+            action = np.random.choice(self.num_actions)  # 随机返回0,1动作
         return action
 
 
 class Environment:
-    '''CartPoleを実行する環境のクラスです'''
+    '''CartPole的执行环境'''
 
     def __init__(self):
-        self.env = gym.make(ENV)  # 実行する課題を設定
-        num_states = self.env.observation_space.shape[0]  # 課題の状態の数4を取得
-        num_actions = self.env.action_space.n  # CartPoleの行動（右に左に押す）の2を取得
-        self.agent = Agent(num_states, num_actions)  # 環境内で行動するAgentを生成
+        self.env = gym.make(ENV)  # 设置要执行的任务
+        num_states = self.env.observation_space.shape[0]  # 获取任务状态个数
+        num_actions = self.env.action_space.n  # 获取CartPole的动作数为2
+        self.agent = Agent(num_states, num_actions)  # 创建环境中行动的Agent
 
     def run(self):
-        '''実行'''
-        complete_episodes = 0  # 195step以上連続で立ち続けた試行数
-        is_episode_final = False  # 最終試行フラグ
-        frames = []  # 動画用に画像を格納する変数
+        '''执行'''
+        complete_episodes = 0  # 195 step以上实验次数
+        is_episode_final = False  # 最终实验的标志
+#        frames = []  # 存储视频动画的变量
 
-        for episode in range(NUM_EPISODES):  # 試行数分繰り返す
-            observation = self.env.reset()  # 環境の初期化
+        for episode in range(NUM_EPISODES):  # 实验的最大重复次数
+            observation = self.env.reset()  # 环境初始化
 
-            for step in range(MAX_STEPS):  # 1エピソードのループ
+            for step in range(MAX_STEPS):  # 每个回合的循环
 
-                if is_episode_final is True:  # 将最终实验各个时刻的图像添加到帧中
-                    frames.append(self.env.render(mode='rgb_array'))
+#                if is_episode_final is True:  # 将最终实验各个时刻的图像添加到帧中
+#                    frames.append(self.env.render(mode='rgb_array'))
 
-                # 行動を求める
+                # 求取动作
                 action = self.agent.get_action(observation, episode)
 
-                # 行動a_tの実行により、s_{t+1}, r_{t+1}を求める
+                # 通过执行动作a_t找到s_{t+1}, r_{t+1}
                 observation_next, _, done, _ = self.env.step(
-                    action)  # rewardとinfoは使わないので_にする
-
-                # 報酬を与える
-                if done:  # ステップ数が200経過するか、一定角度以上傾くとdoneはtrueになる
+                    action)  # 不使用reward和info
+                
+                # 给与奖励
+                if done:  # 如果步数超过200，或者如果倾斜超过某个角度，则done为true
                     if step < 195:
-                        reward = -1  # 途中でこけたら罰則として報酬-1を与える
-                        complete_episodes = 0  # 195step以上連続で立ち続けた試行数をリセット
+                        reward = -1  # 如果半途摔倒，给与奖励-1的惩罚
+                        complete_episodes = 0  # 站立超过195 step以上，重置实验次数
                     else:
-                        reward = 1  # 立ったまま終了時は報酬1を与える
-                        complete_episodes += 1  # 連続記録を更新
+                        reward = 1  # 持续到结束，则奖励为1
+                        complete_episodes += 1  # 更新连续记录
                 else:
-                    reward = 0  # 途中の報酬は0
+                    reward = 0  # 途中奖励为0
 
-                # step+1の状態observation_nextを用いて,Q関数を更新する
+                # 使用step+1的状态observation_next更新Q函数
                 self.agent.update_Q_function(
                     observation, action, reward, observation_next)
 
-                # 観測の更新
+                # 观测更新
                 observation = observation_next
 
-                # 終了時の処理
+                # 结束时处理
                 if done:
                     print('{0} Episode: Finished after {1} time steps'.format(
                         episode, step + 1))
                     break
 
-#            if is_episode_final is True:  # 最終試行では動画を保存と描画
+#            if is_episode_final is True:  # 最后一次实验中保存并绘制动画
 #                display_frames_as_gif(frames)
 #                break
 
-            if complete_episodes >= 10:  # 10連続成功なら
-                print('10回連続成功')
-                is_episode_final = True  # 次の試行を描画を行う最終試行とする
+            if complete_episodes >= 10:  # 10次连续成功，绘制下次实验为最终实验
+                print('已经连续成功10次！！')
+                break
+#                is_episode_final = True  # 最终状态更新
 
 
 # main
