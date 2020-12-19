@@ -65,7 +65,7 @@ class Brain:
         # Q表创建，行数为状态离散化后的分割数，列数为动作数
         self.q_table = np.random.uniform(low=0, high=1, size=(
             NUM_DIZITIZED**num_states, num_actions))
-
+        
 
     def bins(self, clip_min, clip_max, num):
         '''求得观察到的状态（连续值）到离散值的数字转换阈值'''

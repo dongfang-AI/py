@@ -9,46 +9,43 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gym
 
-
 #声明动画的绘图函数
-from JSAnimation.IPython_display import display_animation
-from matplotlib import animation
-from IPython.display import display
-
-def display_frames_as_gif(frames):
-    """
-    Displays a list of frames as a gif, with controls
-    """
-    plt.figure(figsize=(frames[0].shape[1]/72.0, frames[0].shape[0]/72.0),
-               dpi=72)
-    patch = plt.imshow(frames[0])
-    plt.axis('off')
-
-    def animate(i):
-        patch.set_data(frames[i])
-
-    anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames),
-                                   interval=50)
-
-    anim.save('movie_cartpole_DQN.mp4')  # 動画のファイル名と保存です
-    display(display_animation(anim, default_mode='loop'))
-    
+#from JSAnimation.IPython_display import display_animation
+#from matplotlib import animation
+#from IPython.display import display
+#
+#def display_frames_as_gif(frames):
+#    """
+#    Displays a list of frames as a gif, with controls
+#    """
+#    plt.figure(figsize=(frames[0].shape[1]/72.0, frames[0].shape[0]/72.0),
+#               dpi=72)
+#    patch = plt.imshow(frames[0])
+#    plt.axis('off')
+#
+#    def animate(i):
+#        patch.set_data(frames[i])
+#
+#    anim = animation.FuncAnimation(plt.gcf(), animate, frames=len(frames),
+#                                   interval=50)
+#
+#    anim.save('movie_cartpole_DQN.mp4')  # 视频保存的文件名
+#    display(display_animation(anim, default_mode='loop'))
+#    
 #实现namedtuple
 #使用nametuple与字段名称成对存储值
-from collections import namedtuple
-
-Tr = namedtuple('tr', ('name_a', 'value_b'))
-Tr_object = Tr('名称为A', 100)
-
-print(Tr_object)  #
-print(Tr_object.value_b)  # 输出：100
+#from collections import namedtuple
+#
+#Tr = namedtuple('tr', ('name_a', 'value_b'))
+#Tr_object = Tr('名称为A', 100)
+#
+#print(Tr_object)  #
+#print(Tr_object.value_b)  # 输出：100
 
 # namedtuple生成
 from collections import namedtuple
-
 Transition = namedtuple(
     'Transition', ('state', 'action', 'next_state', 'reward'))
-
 
 #常量设定
 ENV = 'CartPole-v0'  # 任务名称
@@ -56,7 +53,9 @@ GAMMA = 0.99  # 时间折扣率
 MAX_STEPS = 200  # 1次试验中的step数
 NUM_EPISODES = 500  # 最大尝试次数
 
-#存储经验的内存类
+#==================================================
+#1.经验池类ReplayMemory
+#==================================================
 class ReplayMemory:
 
     def __init__(self, CAPACITY):
@@ -83,10 +82,11 @@ class ReplayMemory:
         '''返回当前memory的长度'''
         return len(self.memory)
 
-
-#定义Brain类
+#==================================================
+#2.定义Brain类
 #将Q函数设置为深度学习网络
-        
+#==================================================
+   
 import random
 import torch
 from torch import nn
@@ -95,7 +95,6 @@ import torch.nn.functional as F
 
 BATCH_SIZE = 32
 CAPACITY = 10000
-
 
 class Brain:
     def __init__(self, num_states, num_actions):
@@ -217,6 +216,9 @@ class Brain:
 
         return action
 
+#==================================================
+#3.Agent类
+#==================================================
 #在CartPole上运行的智能体类，是一个带有杆的小车
 class Agent:
     def __init__(self, num_states, num_actions):
@@ -236,6 +238,9 @@ class Agent:
         '''将state, action, state_next, reward的内容保存在经验池中'''
         self.brain.memory.push(state, action, state_next, reward)
 
+#==================================================
+#4.Environment类
+#==================================================
 #执行CartPole的环境类
 class Environment:
 
