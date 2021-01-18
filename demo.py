@@ -160,7 +160,7 @@ Created on Sun Nov 15 10:10:35 2020
 #print(grades[0],grades[2])
 
 #字典
-info = {'name':'班长','id':100,'sex':'f','address':'湖北武汉'}
+#info = {'name':'班长','id':100,'sex':'f','address':'湖北武汉'}
 #元素提取
 #id = info.get('age','001') #提取age对应值，默认001
 #print(info['name'],id)
@@ -581,15 +581,161 @@ info = {'name':'班长','id':100,'sex':'f','address':'湖北武汉'}
 #print(b)
 #print(c)
 
-import numpy as np
-
-a = np.array([['王伟',20,'计算机'],['张浩',19,'法律']])
-type(a)
-
-
+#import numpy as np
+#
+#a = np.array([['王伟',20,'计算机'],['张浩',19,'法律']])
+#type(a)
 
 
+#for i in range(5):
+#    for j in range(5):
+#        print(i*j)
+#        if i == 3:
+#            break
 
 
+#from matplotlib import pyplot as plt
+#import numpy as np
+#import mpl_toolkits.mplot3d.axes3d as p3
+#from matplotlib import animation
+#
+#
+#fig = plt.figure()
+#ax = p3.Axes3D(fig)
+##节点位置
+#q = [[-4.32, -2.17, -2.25, 4.72, 2.97, 1.74],
+#     [ 2.45, 9.73,  7.45,4.01,3.42,  1.80],
+#     [-1.40, -1.76, -3.08,-9.94,-3.13,-1.13]]
+##节点速度
+#v = [[ 0.0068,0.024, -0.014,-0.013, -0.0068,-0.04],
+#     [ 0.012,0.056, -0.022,0.016,  0.0045, 0.039],
+#     [-0.0045,  0.031,  0.077,0.0016, -0.015,-0.00012]]
+#
+#x=np.array(q[0])
+#y=np.array(q[1])
+#z=np.array(q[2])
+#s=np.array(v[0])
+#u=np.array(v[1])
+#w=np.array(v[2])
+#
+#
+#points, = ax.plot(x, y, z, '*')
+#txt = fig.suptitle('')
+#
+#def update_points(num, x, y, z, points):
+#    txt.set_text('num={:d}'.format(num)) # for debug purposes
+#
+#    # calculate the new sets of coordinates here. The resulting arrays should have the same shape
+#    # as the original x,y,z
+#    new_x = x+np.random.normal(1,0.1, size=(len(x),))
+#    new_y = y+np.random.normal(1,0.1, size=(len(y),))
+#    new_z = z+np.random.normal(1,0.1, size=(len(z),))
+#
+#    # update properties
+#    points.set_data(new_x,new_y)
+#    points.set_3d_properties(new_z, 'z')
+#
+#    # return modified artists
+#    return points,txt
+#
+#ani=animation.FuncAnimation(fig, update_points, frames=10, fargs=(x, y, z, points))
+#
+#plt.show()
 
 
+###################################################################################################
+#
+
+#ax.set_zlabel('z [pc]')
+#plt.show()
+
+
+#import numpy as np
+#v = []
+#
+#def test():
+#    global v
+#    ran_v = np.random.choice([0.0006114,0.0061135,0.0144105])
+#    print(ran_v)
+#    v.append(ran_v)
+#
+#for i in range(10):
+#    test()
+
+
+import matplotlib.pyplot as plt
+
+#x = [[1,2],[3,4]]
+#y = [[3,3],[2,5]]
+#for i in range(len(x)):
+# plt.plot(x[i], y[i], color='r')
+# plt.scatter(x[i], y[i], color='b')
+ 
+x1 = [1,2] # 要连接的两个点的坐标
+y1 = [3,2]
+x2 = [4,5]
+y2 = [4,6]
+x3 = [3,4]
+y3 = [7,2]
+
+#x = [x1,y1,x2,y2,x3,y3]
+#x.append([0,1])
+#x.append([0,8])
+
+x = [[x1,y1,x2,y2],[x3,y3]]
+
+#def test():
+#    x1 = [1,2] # 要连接的两个点的坐标
+#    y1 = [3,2]
+#    x2 = [4,5]
+#    y2 = [4,6]
+#    x3 = [3,4]
+#    y3 = [7,2]
+#    return x1,y1,x2,y2,x3,y3
+#a = test()
+#*args = [1,2],[3,2]
+#plt.plot(x1,y1,x2,y2,x3,y3, color='r')
+plt.plot(*x[0], color='r')
+
+a = [[[1,1],[1,2],[1,3]],[[2,2],[2,2],[2,2]],[[3,3],[3,3],[3,3]]]
+print(a[0])
+print(*a[0])
+print(*a[0][:2])
+#删除画出的线段
+#import matplotlib.pyplot as plt
+#import numpy as np
+#
+#x = np.arange(10)
+#np.random.seed(101)
+#y = np.random.rand(10)
+#
+#small = [i for i in range(len(x)) if y[i] < .5 ]
+#big = [i for i in range(len(x)) if y[i] > .5 ]
+#
+#fig = plt.figure()
+#ax = fig.add_subplot(111)
+#
+#ax.scatter(x,y)
+## user wants to plot lines connecting big values (>.5)
+#ax.plot(x[big],y[big])
+#
+##plt.show()
+## now user wants to delete the first (and only) line
+##del ax.lines[0]
+#del ax.lines
+## so that they can plot a line only showing small values
+#ax.plot(x[small],y[small])
+#
+#plt.show()
+
+
+#import matplotlib.pyplot as plt
+#import numpy as np
+#
+#x = [1,2]
+#y = [3,10]
+#link_node = 20
+##plt.plot(x, y, color='r')
+#x1 = np.arange(x[0],x[1],abs((x[0]-x[1]))/link_node)
+#y1 = np.arange(y[0],y[1],abs((y[0]-y[1]))/link_node)
+#plt.plot(x1, y1, 'sb')

@@ -6,7 +6,7 @@ Created on Thu Nov 19 16:10:54 2020
 """
 #导入包
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #%matplotlib inline
 import gym
 
@@ -41,20 +41,34 @@ ETA = 0.5  # 学习系数
 MAX_STEPS = 200  # 1次试验中的步数
 NUM_EPISODES = 1000  # 最大试验次数
 
+#动作空间：0左移 1右移
+#状态空间：小车位置，小车速度，杆的速度，杆的角似度 0,1,2,3,4,5
+'''
+-∞->-1.6 离散化为0
+-1.6->-0.8 离散化为1
+-0.8->0 离散化为2
+0->0.8 离散化为3
+0.8->1.6 离散化为4
+1.6->+∞ 离散化为5
+''' 
+
 class Agent:
     '''CartPole的智能体类，将是带有杆的小车'''
 
     def __init__(self, num_states, num_actions):
         self.brain = Brain(num_states, num_actions)  # 为智能体创建大脑以做出决策
-
+        
     def update_Q_function(self, observation, action, reward, observation_next):
-        '''Q函数的更新'''
-        self.brain.update_Q_table(
-            observation, action, reward, observation_next)
+        '''Q函数的更新 (s,a,r,s')'''
+        self.brain.update_Q_table(observation, action, reward, observation_next)
+#        print(observation, action, reward, observation_next) 打印样式如下：
+#        [-0.68266526 -0.14784865  0.03088992 -0.0982715 ] 1 1 
+#        [-0.68562223  0.04681728  0.02892449 -0.3810509 ]
 
     def get_action(self, observation, step):
         '''动作的确定'''
         action = self.brain.decide_action(observation, step)
+#        print(action)
         return action
 
 class Brain:
@@ -63,23 +77,32 @@ class Brain:
     def __init__(self, num_states, num_actions):
         self.num_actions = num_actions  # CartPole两种动作（向左或向右）
         # Q表创建，行数为状态离散化后的分割数，列数为动作数
+#        print('状态-动作：',num_states, num_actions)
         self.q_table = np.random.uniform(low=0, high=1, size=(
             NUM_DIZITIZED**num_states, num_actions))
-        
+        #生成0-1之间，UM_DIZITIZED**num_states行 num_actions列的数组
 
     def bins(self, clip_min, clip_max, num):
         '''求得观察到的状态（连续值）到离散值的数字转换阈值'''
         return np.linspace(clip_min, clip_max, num + 1)[1:-1]
+        #生成num + 1行1列的数组，取第二个-倒数第二个
 
     def digitize_state(self, observation):
         '''将观察到的observation转换为离散值'''
         cart_pos, cart_v, pole_angle, pole_v = observation
+#        print('观测值：',cart_pos, cart_v, pole_angle, pole_v )
+#        print('观测值：',observation)
         digitized = [
             np.digitize(cart_pos, bins=self.bins(-2.4, 2.4, NUM_DIZITIZED)),
             np.digitize(cart_v, bins=self.bins(-3.0, 3.0, NUM_DIZITIZED)),
             np.digitize(pole_angle, bins=self.bins(-0.5, 0.5, NUM_DIZITIZED)),
             np.digitize(pole_v, bins=self.bins(-2.0, 2.0, NUM_DIZITIZED))
         ]
+#        print('离散化后观测值：',digitized)
+#        for i, x in enumerate(digitized):
+#            print('观测值',i, x,x * (NUM_DIZITIZED**i))
+        #如果离散后的值为(1,2,3,4)  返回值定义为 1*1+2*6+3*6*6+4*6*6*6*6=985
+#        print(sum([x * (NUM_DIZITIZED**i) for i, x in enumerate(digitized)]))
         return sum([x * (NUM_DIZITIZED**i) for i, x in enumerate(digitized)])
 
     def update_Q_table(self, observation, action, reward, observation_next):
@@ -109,18 +132,19 @@ class Environment:
         self.env = gym.make(ENV)  # 设置要执行的任务
         num_states = self.env.observation_space.shape[0]  # 获取任务状态个数
         num_actions = self.env.action_space.n  # 获取CartPole的动作数为2
-        self.agent = Agent(num_states, num_actions)  # 创建环境中行动的Agent
+        self.agent = Agent(num_states, num_actions)  # 创建环境中的agent对象和Q表
 
     def run(self):
         '''执行'''
-        complete_episodes = 0  # 195 step以上实验次数
-        is_episode_final = False  # 最终实验的标志
+        complete_episodes = 0  # 保存小车持续运动195步或以上的实验次数
+#        is_episode_final = False  # 最终实验的标志
 #        frames = []  # 存储视频动画的变量
 
-        for episode in range(NUM_EPISODES):  # 实验的最大重复次数
-            observation = self.env.reset()  # 环境初始化
+        for episode in range(NUM_EPISODES):  # 实验中最大重复次数
+            observation = self.env.reset()  # gym环境初始化
 
-            for step in range(MAX_STEPS):  # 每个回合的循环
+            for step in range(MAX_STEPS):  # 每次试验最大回合次数
+                
 
 #                if is_episode_final is True:  # 将最终实验各个时刻的图像添加到帧中
 #                    frames.append(self.env.render(mode='rgb_array'))
@@ -129,8 +153,7 @@ class Environment:
                 action = self.agent.get_action(observation, episode)
 
                 # 通过执行动作a_t找到s_{t+1}, r_{t+1}
-                observation_next, _, done, _ = self.env.step(
-                    action)  # 不使用reward和info
+                observation_next, _, done, _ = self.env.step(action)  # 不使用reward和info
                 
                 # 给与奖励
                 if done:  # 如果步数超过200，或者如果倾斜超过某个角度，则done为true
@@ -166,7 +189,8 @@ class Environment:
 #                is_episode_final = True  # 最终状态更新
 
 
-# main
+# 实例化 环境对象
 cartpole_env = Environment()
+#运行试验环境
 cartpole_env.run()
 

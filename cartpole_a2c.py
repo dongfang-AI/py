@@ -6,25 +6,26 @@ Created on Sat Dec 19 22:22:08 2020
 """
 #引入包
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import gym
 
 # 常量设定
 ENV = 'CartPole-v0'  # 任务名称
-GAMMA = 0.99  # 时间折扣
+GAMMA = 0.99  # 时间折扣率
 MAX_STEPS = 200  # 1次试验中步数
 NUM_EPISODES = 1000  # 最大尝试次数
 
 NUM_PROCESSES = 32  # 同时执行环境
 NUM_ADVANCED_STEP = 5  # 设置提前计算奖励总和的步数
 
-
 # A2C的误差函数的常量设置
-value_loss_coef = 0.5
-entropy_coef = 0.01
+value_loss_coef = 0.5 #价值损失系数
+entropy_coef = 0.01 #信息熵系数
 max_grad_norm = 0.5
 
+#==================================================
 #存储类定义
+#==================================================
 class RolloutStorage(object):
     '''Advantage学习的存储类'''
 
@@ -49,12 +50,13 @@ class RolloutStorage(object):
         self.index = (self.index + 1) % NUM_ADVANCED_STEP  # 更新索引
 
     def after_update(self):
-        '''Advantageするstep数が完了したら、最新のものをindex0に格納'''
+        '''当Advantage的step数已经完成时，最新的一个存储在index0'''
         self.observations[0].copy_(self.observations[-1])
-        self.masks[0].copy_(self.masks[-1])
+        self.masks[0].copy_(self.masks[-1])+98
+
 
     def compute_returns(self, next_value):
-        '''当Advantage的step数已经完成时，最新的一个存储在index0'''
+        '''计算Advantage步骤中每个步骤的折扣奖励总和'''
 
         # 注意： 从5 step后，开始反向计算
         # 注意：第 5 step 是 Advantage1，第4 步 是Advantage2
@@ -63,11 +65,11 @@ class RolloutStorage(object):
             self.returns[ad_step] = self.returns[ad_step + 1] * \
                 GAMMA * self.masks[ad_step + 1] + self.rewards[ad_step]
 
-
+#==================================================
+#深度神经网络
+#==================================================
 import torch.nn as nn
 import torch.nn.functional as F
-
-
 class Net(nn.Module):
 
     def __init__(self, n_in, n_mid, n_out):
@@ -112,11 +114,11 @@ class Net(nn.Module):
 
         return value, action_log_probs, entropy
 
-
-#定义agent的大脑类并没有所有agent之间共享它们
+#==================================================
+#定义agent的大脑类并在所有agent之间共享它们
+#==================================================
 import torch
 from torch import optim
-
 
 class Brain(object):
     def __init__(self, actor_critic):
@@ -140,8 +142,7 @@ class Brain(object):
         # action_log_probs torch.Size([80, 1])
         # entropy torch.Size([])
 
-        values = values.view(num_steps, num_processes,
-                             1)  # torch.Size([5, 16, 1])
+        values = values.view(num_steps, num_processes,1)  # torch.Size([5, 16, 1])
         action_log_probs = action_log_probs.view(num_steps, num_processes, 1)
 
         # advantage的计算（动作价值-状态价值）
@@ -168,8 +169,7 @@ class Brain(object):
         self.optimizer.step()  # 更新连接参数
 
 
-import copy
-
+#import copy
 class Environment:
     def run(self):
         '''主要运行'''
@@ -186,10 +186,8 @@ class Environment:
 
         # 存储变量生成
         obs_shape = n_in
-        current_obs = torch.zeros(
-            NUM_PROCESSES, obs_shape)  # torch.Size([16, 4])
-        rollouts = RolloutStorage(
-            NUM_ADVANCED_STEP, NUM_PROCESSES, obs_shape)  # rollouts对象
+        current_obs = torch.zeros(NUM_PROCESSES, obs_shape)  # torch.Size([16, 4])
+        rollouts = RolloutStorage(NUM_ADVANCED_STEP, NUM_PROCESSES, obs_shape)  # rollouts对象
         episode_rewards = torch.zeros([NUM_PROCESSES, 1])  # 保存当前实验的奖励
         final_rewards = torch.zeros([NUM_PROCESSES, 1])  # 保存最后实验的奖励
         obs_np = np.zeros([NUM_PROCESSES, obs_shape])  # Numpy数组
@@ -221,8 +219,7 @@ class Environment:
 
                 # 运行1 step
                 for i in range(NUM_PROCESSES):
-                    obs_np[i], reward_np[i], done_np[i], _ = envs[i].step(
-                        actions[i])
+                    obs_np[i], reward_np[i], done_np[i], _ = envs[i].step(actions[i])
 
                     # 判断当前episode是否终止以及是否有state_next
                     if done_np[i]:  # 如果步数已超过200，或者杆倾斜超过某个角度，done为true

@@ -126,6 +126,8 @@ print("迷宫探索步伐：" + str(len(state_history) - 1) + "次")
 #将智能体移动进行可视化
 from matplotlib import animation
 #from IPython.display import HTML
+#ax = plt.gca()
+#line, = ax.plot([0.5], [2.5], marker="o", color='g', markersize=60)
 
 def init():
     '''初始化背景'''
@@ -135,6 +137,7 @@ def init():
 def animate(i):
     '''每一帧的画面内容'''
     state = state_history[i]  # 画出当前的位置
+    print(state)
     x = (state % 3) + 0.5  # 状态的x坐标为状态数除以3的余数+0.5
     y = 2.5 - int(state / 3)  
     line.set_data(x, y)
