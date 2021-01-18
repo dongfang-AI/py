@@ -61,7 +61,7 @@ plt.text(8.40,1.85,'LEO',color='black')
 #######################################################
 #Possion分布 生成随机到达用户 300s网络时间，每0.1s采用一次
 #ue_num = np.random.poisson(lam=2, size=3000)
-node_num = 10 #移动UE数 100个用户
+node_num = 100 #移动UE数 100个用户
 time_len = 600 #采用时长 0.1s采样一次 600s
 q = [[],[]] #位置
 speed=[] #速度
@@ -220,49 +220,49 @@ for j in range(ue_ho.shape[1]):
 #######################################################
 #1、STIN网络环境初始化
 #######################################################
-#fig = plt.figure(figsize=(10, 8))
-#ax = plt.gca()
-##设定画图的范围
-#ax.set_xlim(0, 10)
-#ax.set_ylim(0, 8)
-#plt.tick_params(axis='both', which='both', bottom='off', top='off',
-#                labelbottom='off', right='off', left='off', labelleft='off')
-##画出道路结构：4横3纵
-#plt.plot([1, 1], [0, 8], color='lightgrey', linewidth=20)
-#plt.plot([3, 3], [3.5, 8], color='lightgrey', linewidth=20)
-#plt.plot([7, 7], [0, 6.5], color='lightgrey', linewidth=20)
-#
-#plt.plot([0, 10], [6.5, 6.5], color='lightgrey', linewidth=20)
-#plt.plot([0, 10], [5, 5], color='lightgrey', linewidth=20)
-#plt.plot([0, 10], [3.5, 3.5], color='lightgrey', linewidth=20)
-#plt.plot([0, 7], [2, 2], color='lightgrey', linewidth=20)
-#
-##设置基站位置
-#def plt_BS(a,b,r):
-#    #a为BS的x坐标，b为BS的y坐标，r为BS覆盖范围半径
-#    plt.plot([a],[b], marker="^", color='skyblue', markersize=20)
-#    plt.text(a-0.06,b-0.15,'BS',color='black')
-#    theta = np.arange(0, 2*np.pi, 0.01)
-#    x = a + r * np.cos(theta)
-#    y = b + r * np.sin(theta)
-#    plt.plot(x, y,color="b",linewidth=1.0, linestyle='--')
-#
-##基站BS部署位置(x,y) 31
-#pos_BS=[[0.6,1.0],[0.6,2.5],[0.6,4],[0.6,5.5],[0.6,7],
-#        [1.9,1.2],[1.9,2.5],[1.9,4],[1.9,5.5],[1.9,7],
-#        [3.5,1.4],[3.5,2.7],[3.5,4.5],[3.5,6],[3.5,7],
-#        [5.1,1.4],[5.0,3],[5.1,4.5],[5.1,6],[5.1,7],
-#        [6.5,1.0],[6.5,3],[6.5,4.5],[6.5,6],[6.5,7],
-#        [8.0,4.0],[8,5.5],[8,7],[9.5,4.0],[9.5,5.5],
-#        [9.5,7]
-#        ]
-#r=1.1 #基站通信覆盖半径
-#for a,b in pos_BS:
-#    plt_BS(a,b,r)
-#
-##LEO卫星
-#plt.plot(8.5,2,marker="*", color='skyblue', markersize=30)
-#plt.text(8.40,1.85,'LEO',color='black')
+fig = plt.figure(figsize=(10, 8))
+ax = plt.gca()
+#设定画图的范围
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 8)
+plt.tick_params(axis='both', which='both', bottom='off', top='off',
+                labelbottom='off', right='off', left='off', labelleft='off')
+#画出道路结构：4横3纵
+plt.plot([1, 1], [0, 8], color='lightgrey', linewidth=20)
+plt.plot([3, 3], [3.5, 8], color='lightgrey', linewidth=20)
+plt.plot([7, 7], [0, 6.5], color='lightgrey', linewidth=20)
+
+plt.plot([0, 10], [6.5, 6.5], color='lightgrey', linewidth=20)
+plt.plot([0, 10], [5, 5], color='lightgrey', linewidth=20)
+plt.plot([0, 10], [3.5, 3.5], color='lightgrey', linewidth=20)
+plt.plot([0, 7], [2, 2], color='lightgrey', linewidth=20)
+
+#设置基站位置
+def plt_BS(a,b,r):
+    #a为BS的x坐标，b为BS的y坐标，r为BS覆盖范围半径
+    plt.plot([a],[b], marker="^", color='skyblue', markersize=20)
+    plt.text(a-0.06,b-0.15,'BS',color='black')
+    theta = np.arange(0, 2*np.pi, 0.01)
+    x = a + r * np.cos(theta)
+    y = b + r * np.sin(theta)
+    plt.plot(x, y,color="b",linewidth=1.0, linestyle='--')
+
+#基站BS部署位置(x,y) 31
+pos_BS=[[0.6,1.0],[0.6,2.5],[0.6,4],[0.6,5.5],[0.6,7],
+        [1.9,1.2],[1.9,2.5],[1.9,4],[1.9,5.5],[1.9,7],
+        [3.5,1.4],[3.5,2.7],[3.5,4.5],[3.5,6],[3.5,7],
+        [5.1,1.4],[5.0,3],[5.1,4.5],[5.1,6],[5.1,7],
+        [6.5,1.0],[6.5,3],[6.5,4.5],[6.5,6],[6.5,7],
+        [8.0,4.0],[8,5.5],[8,7],[9.5,4.0],[9.5,5.5],
+        [9.5,7]
+        ]
+r=1.1 #基站通信覆盖半径
+for a,b in pos_BS:
+    plt_BS(a,b,r)
+
+#LEO卫星
+plt.plot(8.5,2,marker="*", color='skyblue', markersize=30)
+plt.text(8.40,1.85,'LEO',color='black')
 
 
 #将智能体移动进行可视化
@@ -336,13 +336,13 @@ def update_points(t,ue_x,ue_y,ue_link):
     new_y = ue_y[:,t*10]
     print('t:', t)    
     points.set_data(new_x,new_y)
-    k=0
-    for i in range(0,len(lines)*2,2):
-        new_link = [ue_link[t*10][i],ue_link[t*10][i+1]]
-        lines[k].set_data(*new_link)
-        k=k+1
-
-    return points,txt,lines
+#    k=0
+#    for i in range(0,len(lines)*2,2):
+#        new_link = [ue_link[t*10][i],ue_link[t*10][i+1]]
+#        lines[k].set_data(*new_link)
+#        k=k+1
+#    return points,txt,lines
+    return points,txt
 
 ani=animation.FuncAnimation(fig, update_points, frames=time_len, 
                             fargs=(ue_x,ue_y,ue_link), repeat=False)
