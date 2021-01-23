@@ -10,7 +10,7 @@ from PIL import Image
 
 imgs = []
 
-for n in range(32):
+for n in range(600):
     #命名规则 img (1).png
     img=Image.open('img\\img ('+str(n+1)+').png')
     imgs.append(img)

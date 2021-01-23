@@ -663,26 +663,26 @@ Created on Sun Nov 15 10:10:35 2020
 #    test()
 
 
-import matplotlib.pyplot as plt
-
+#import matplotlib.pyplot as plt
+#
 #x = [[1,2],[3,4]]
 #y = [[3,3],[2,5]]
 #for i in range(len(x)):
 # plt.plot(x[i], y[i], color='r')
 # plt.scatter(x[i], y[i], color='b')
  
-x1 = [1,2] # 要连接的两个点的坐标
-y1 = [3,2]
-x2 = [4,5]
-y2 = [4,6]
-x3 = [3,4]
-y3 = [7,2]
-
-#x = [x1,y1,x2,y2,x3,y3]
+#x1 = [1,2] # 要连接的两个点的坐标
+#y1 = [3,2]
+#x2 = [4,5]
+#y2 = [4,6]
+#x3 = [3,4]
+#y3 = [7,2]
+#
+##x = [x1,y1,x2,y2,x3,y3]
 #x.append([0,1])
 #x.append([0,8])
 
-x = [[x1,y1,x2,y2],[x3,y3]]
+#x = [[x1,y1,x2,y2],[x3,y3]]
 
 #def test():
 #    x1 = [1,2] # 要连接的两个点的坐标
@@ -695,13 +695,13 @@ x = [[x1,y1,x2,y2],[x3,y3]]
 #a = test()
 #*args = [1,2],[3,2]
 #plt.plot(x1,y1,x2,y2,x3,y3, color='r')
-plt.plot(*x[0], color='r')
-
-a = [[[1,1],[1,2],[1,3]],[[2,2],[2,2],[2,2]],[[3,3],[3,3],[3,3]]]
-print(a[0])
-print(*a[0])
-print(*a[0][:2])
-#删除画出的线段
+#plt.plot(*x[0], color='r')
+#
+#a = [[[1,1],[1,2],[1,3]],[[2,2],[2,2],[2,2]],[[3,3],[3,3],[3,3]]]
+#print(a[0])
+#print(*a[0])
+#print(*a[0][:2])
+##删除画出的线段
 #import matplotlib.pyplot as plt
 #import numpy as np
 #
@@ -732,10 +732,11 @@ print(*a[0][:2])
 #import matplotlib.pyplot as plt
 #import numpy as np
 #
-#x = [1,2]
-#y = [3,10]
+#x = [7,8]
+#y = [1,0]
 #link_node = 20
 ##plt.plot(x, y, color='r')
-#x1 = np.arange(x[0],x[1],abs((x[0]-x[1]))/link_node)
-#y1 = np.arange(y[0],y[1],abs((y[0]-y[1]))/link_node)
-#plt.plot(x1, y1, 'sb')
+#x1 = np.arange(x[0],x[1],-(x[0]-x[1])/link_node)
+#y1 = np.arange(y[0],y[1],-(y[0]-y[1])/link_node)
+##plt.plot(x1, y1, 'ob')
+#plt.plot(x1, y1, '1', color='skyblue', markersize=10)

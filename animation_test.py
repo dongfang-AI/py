@@ -145,60 +145,60 @@ Created on Wed Dec 30 15:19:19 2020
 #############################################################
 #4.2D多点运动
 #############################################################
-from matplotlib import pyplot as plt
-import numpy as np
-from matplotlib import animation
-
-
-fig = plt.figure()
-ax = plt.gca()
-
-#位置
-q1 = [[-4.32, -2.17, -2.25, 4.72, 2.97, 1.74],
-     [ 2.45, 9.73,  7.45, 4.01, 3.42, 1.80]]
-#速度
-v1 = [[ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-     [0, 0, 0, 0,  0, 0]]
-
-#链路
-#line_x = [[-4.32,0],[ -2.17,0], [-2.25,0], [4.72,0], [2.97,0], [1.74,0]]
-#line_y = [[ 2.45,5], [9.73,5],  [7.45,5], [4.01,5], [3.42,5], [1.80,5]]
-
-x=np.array(q1[0])
-y=np.array(q1[1])
-
-s=np.array(v1[0])
-u=np.array(v1[1])
-
-points, = ax.plot(x, y,  'o')
-#ax.plot(line_x,line_y,'r')
-
-#for i in range(len(line_x)):
-#    plt.plot(line_x[i],line_y[i],'r')
-
-plt.plot(0,5,marker="*", color='skyblue', markersize=30)
-plt.text(-0.2,4.85,'LEO',color='black')
-
-plt.plot(0,4,marker="o", color='skyblue',)
-
-txt = fig.suptitle('')
-
-def update_points(t, x, y, points):    
-    txt.set_text('num={:d}'.format(t)) #采样时间
-
-    new_x = x + s * t
-    new_y = y + u * t
-    print('t:', t)
-
-    # update properties
-    points.set_data(new_x,new_y)
-
-    return points,txt
-
-ani=animation.FuncAnimation(fig, update_points, frames=15, fargs=(x, y, points))
-
-ax.set_xlabel("x [pc]")
-ax.set_ylabel("y [pc]")
+#from matplotlib import pyplot as plt
+#import numpy as np
+#from matplotlib import animation
+#
+#
+#fig = plt.figure()
+#ax = plt.gca()
+#
+##位置
+#q1 = [[-4.32, -2.17, -2.25, 4.72, 2.97, 1.74],
+#     [ 2.45, 9.73,  7.45, 4.01, 3.42, 1.80]]
+##速度
+#v1 = [[ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+#     [0, 0, 0, 0,  0, 0]]
+#
+##链路
+##line_x = [[-4.32,0],[ -2.17,0], [-2.25,0], [4.72,0], [2.97,0], [1.74,0]]
+##line_y = [[ 2.45,5], [9.73,5],  [7.45,5], [4.01,5], [3.42,5], [1.80,5]]
+#
+#x=np.array(q1[0])
+#y=np.array(q1[1])
+#
+#s=np.array(v1[0])
+#u=np.array(v1[1])
+#
+#points, = ax.plot(x, y,  'o')
+##ax.plot(line_x,line_y,'r')
+#
+##for i in range(len(line_x)):
+##    plt.plot(line_x[i],line_y[i],'r')
+#
+#plt.plot(0,5,marker="*", color='skyblue', markersize=30)
+#plt.text(-0.2,4.85,'LEO',color='black')
+#
+#plt.plot(0,4,marker="o", color='skyblue',)
+#
+#txt = fig.suptitle('')
+#
+#def update_points(t, x, y, points):    
+#    txt.set_text('num={:d}'.format(t)) #采样时间
+#
+#    new_x = x + s * t
+#    new_y = y + u * t
+#    print('t:', t)
+#
+#    # update properties
+#    points.set_data(new_x,new_y)
+#
+#    return points,txt
+#
+#ani=animation.FuncAnimation(fig, update_points, frames=15, fargs=(x, y, points))
+#
+#ax.set_xlabel("x [pc]")
+#ax.set_ylabel("y [pc]")
 
 #############################################################
 #版本1
@@ -245,6 +245,20 @@ ax.set_ylabel("y [pc]")
 #
 #ani=animation.FuncAnimation(fig, update_points, frames=time_len*10, 
 #                            fargs=(x, y, points), repeat=False)
+
+#ani.save('sin_x.htm')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

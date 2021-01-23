@@ -74,7 +74,8 @@ class Environment:
         #当前用户的位置数据，在第一次取当前所有用户位置数据和每次的坐标（x,y），所以这里的间隔是2
         #这个状态也是强化学习中的初始状态
         """先计算出每个用户和所有基站之间的信息增益"""
-        current_user_pos = self.user_pos[:, self.scheduling_ptr*2:(self.scheduling_ptr+1)*2]
+        current_user_pos = self.user_pos[:, self.scheduling_pt
+                                         r*2:(self.scheduling_ptr+1)*2]
         #current_user_pos是一个90x2的二维数组
         self.current_user_pos = current_user_pos
         self.association = association  #当前用户分配给7个基站的情况
